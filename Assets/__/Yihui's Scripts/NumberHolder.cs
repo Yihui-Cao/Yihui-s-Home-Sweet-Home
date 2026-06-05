@@ -2,7 +2,7 @@ using System;
 using TMPro;
 using UnityEngine;
 
-// Readme: How to use: 挂在TextMeshProUGUI就行了
+// Readme: How to use: 挂在TextMeshProUGUI就行了, 用set_n就行了, enable就会开始操作
 public enum NumberType
 {
     Comma,
@@ -39,7 +39,7 @@ public class NumberHolder : MonoBehaviour
     double _speed = 1;
     [SerializeField]
     double _init_x = 0.05;
-    double _number;
+    public double _number;
     double _number_surface;
     TMP_Text text // Enable "Pixel Perfect" in Component "Canvas" 
     {
@@ -132,9 +132,12 @@ public class NumberHolder : MonoBehaviour
     }
     void StartShowing()
     {
+        enabled = true;
+    }
+    void OnEnable()
+    {
         _x = _init_x;
         _start_n = number_surface;
-        enabled = true;
     }
     void StopShowing()
     {
