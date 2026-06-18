@@ -5,9 +5,9 @@ using UnityEngine;
 // Readme: How to use: 挂在TextMeshProUGUI就行了, 用set_n就行了, enable就会开始操作
 public enum NumberType
 {
+    Long,
     Comma,
     Short,
-    Long,
 }
 public class NumberHolder : MonoBehaviour
 {
@@ -35,6 +35,7 @@ public class NumberHolder : MonoBehaviour
     #region HIDEN
     [SerializeField]
     NumberType _type = NumberType.Comma;
+    [Tooltip("如果不要渐进效果就把速度调很高！")]
     [SerializeField]
     double _speed = 1;
     [SerializeField]
