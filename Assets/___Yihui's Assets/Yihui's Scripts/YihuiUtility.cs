@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
+using DG.Tweening;
+using UnityEngine.UI;
 
 public static class U
 {
@@ -89,19 +91,6 @@ public static class U
         float interpolationFactor = (Time.time - Time.fixedTime) / Time.fixedDeltaTime * Speed_Factor;
         Graphic.position = Vector3.Lerp(StartingPosition, TargetPosition, interpolationFactor);
     }
-    public static void ShakeText(RectTransform textTransform, float ShakeMagnitude, float Original_rotation)
-    {
-        if (textTransform == null) return;
-
-        // 位置抖动
-        float offsetX = Random.Range(-ShakeMagnitude, ShakeMagnitude);
-        float offsetY = Random.Range(-ShakeMagnitude, ShakeMagnitude);
-        textTransform.localPosition += new Vector3(offsetX, offsetY, 0f);
-
-        // 旋转抖动
-        float rotationZ = Random.Range(-ShakeMagnitude, ShakeMagnitude);
-        textTransform.localRotation = Quaternion.Euler(0, 0, rotationZ + Original_rotation);
-    }
     public static void Display_UI_In_World_Position(RectTransform UI_Rect, Vector3 Wolrd_Position)
     {
         Vector3 screenpos = Camera.main.WorldToScreenPoint(Wolrd_Position);
@@ -181,6 +170,7 @@ public static class U
 
         return list[Random.Range(0, list.Count)];
     }
+#region FontEffect字体效果!
     public static Gradient GetGradient()
     {
         Gradient gradient = new Gradient();
@@ -207,6 +197,102 @@ public static class U
 
         return gradient;
     }
+#endregion
+
+#region Dotween动画效果!
+    /// <summary>
+    /// 2D only, 模仿Smashing Bottles的技能书节点！从天而降
+    /// </summary>
+    /// <param name="rct"></param>
+    /// <param name="height">出现的高度！</param>
+    /// <param name="exaggerated">clampped到>=0, 更加夸张地出现！(0是默认值)</param>
+    public static void AppearA(RectTransform rct, float height = 100, float exaggerated = 0)
+    {
+        exaggerated = Mathf.Clamp(exaggerated, 0, float.MaxValue);
+        
+        RectTransform graphic = rct.Find("Graphic").GetComponent<RectTransform>();
+        if (graphic == null)
+        {
+            Debug.LogError(rct.name + " Requires a Graphic to work!");
+            return;
+        }
+
+        {// 动画
+            graphic.DOKill();
+
+            graphic.anchoredPosition = new Vector2(0, height);
+            graphic.localScale = new Vector3(Mathf.Pow(0.75f, 1 + exaggerated), 1f, 1f);
+
+            Sequence seq = DOTween.Sequence();
+
+            // 位置：从上面掉下来
+            seq.Append(
+                graphic.DOAnchorPosY(0, 0.35f)
+                    .SetEase(Ease.OutBack)
+            );
+
+            // scale：同时开始，先弹大，再回到 1
+            Sequence scaleSeq = DOTween.Sequence();
+            scaleSeq.Append(
+                graphic.DOScaleX(Mathf.Pow(1.18f, 1 + exaggerated), 0.18f)
+                    .SetEase(Ease.InSine)
+            );
+            scaleSeq.Append(
+                graphic.DOScaleX(1f, 0.17f)
+                    .SetEase(Ease.OutSine)
+            );
+
+            seq.Join(scaleSeq);
+        }
+        
+    }
+    /// <summary>
+    /// 2D only, 模仿Smashing Bottles的技能书节点！从天而降
+    /// </summary>
+    /// <param name="t"></param>
+    /// <param name="height">出现的高度！</param>
+    /// <param name="exaggerated">clampped到>=0, 更加夸张地出现！(0是默认值)</param>
+    public static void AppearA(Transform t, float height = 2, float exaggerated = 0)
+    {
+        exaggerated = Mathf.Clamp(exaggerated, 0, float.MaxValue);
+        
+        Transform graphic = t.Find("Graphic").GetComponent<Transform>();
+        if (graphic == null)
+        {
+            Debug.LogError(t.name + " Requires a Graphic to work!");
+            return;
+        }
+
+        {// 动画
+            graphic.DOKill();
+
+            graphic.localPosition = new Vector2(0, height);
+            graphic.localScale = new Vector3(Mathf.Pow(0.75f, 1 + exaggerated), 1f, 1f);
+
+            Sequence seq = DOTween.Sequence();
+
+            // 位置：从上面掉下来
+            seq.Append(
+                graphic.DOLocalMoveY(0, 0.35f)
+                    .SetEase(Ease.OutBack)
+            );
+
+            // scale：同时开始，先弹大，再回到 1
+            Sequence scaleSeq = DOTween.Sequence();
+            scaleSeq.Append(
+                graphic.DOScaleX(Mathf.Pow(1.18f, 1 + exaggerated), 0.18f)
+                    .SetEase(Ease.InSine)
+            );
+            scaleSeq.Append(
+                graphic.DOScaleX(1f, 0.17f)
+                    .SetEase(Ease.OutSine)
+            );
+
+            seq.Join(scaleSeq);
+        }
+        
+    }
+#endregion
 }
 
 public enum GizmoColor

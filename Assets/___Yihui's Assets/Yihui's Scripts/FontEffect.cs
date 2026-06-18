@@ -1,7 +1,7 @@
 using TMPro;
 using UnityEngine;
 
-// Readme: How to use: 挂在TextMeshProUGUI就行了
+// Readme: How to use: 挂在TMP_Text上就行了
 public class FontEffect : MonoBehaviour
 {
     [HideInInspector] public TMP_Text mesh;
